@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PU Online Payment Portal</title>
+    <style>
+        /* * --- EXACT DUPE STYLES v3 ---
+         * Footer is fixed.
+         */
+        
+        /* --- Base & Body --- */
+        :root {
+            --pu-blue: #004a99;
+            --pu-orange: #e67e22;
+            --btn-blue: #2980b9; 
+            --text-dark: #333;
+            --text-light: #555;
+            --border-color: #eee;
+            --bg-light: #f4f7f6;
+            --status-green: #27ae60;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 80px; 
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--pu-blue);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header .title {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        header .icons {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        header .icons.hamburger span {
+            margin-left: 0;
+        }
+        header .icons svg {
+            width: 1.4rem;
+            height: 1.4rem;
+            vertical-align: middle;
+            opacity: 0.9;
+        }
+
+        /* --- Main Content Container --- */
+        main {
+            padding: 16px;
+        }
+
+        .register-container {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        h2 {
+            font-size: 0.875rem;
+            color: var(--pu-orange);
+            font-weight: 700;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Full Scrolling Table --- */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th, td {
+            padding: 16px 12px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        th {
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        td {
+            font-size: 0.95rem;
+            color: #222;
+        }
+        
+        td:nth-child(1) { font-weight: 600; color: var(--text-light); }
+        td:nth-child(3) { color: var(--text-light); }
+        td:nth-child(4) { font-weight: 600; color: #222; }
+        td:nth-child(5) { color: var(--status-green); font-weight: 600; }
+
+        /* --- Action Buttons --- */
+        .actions-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--btn-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            min-width: 90px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .btn-action svg {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 6px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+        }
+        .btn-action span {
+             vertical-align: middle;
+        }
+
+        /* --- Footer (Fixed) --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 25px 0;
+            font-size: 0.8rem;
+            color: #777;
+            border-top: 1px solid #e0e0e0;
+            background-color: var(--bg-light);
+            z-index: 50;
+        }
+
+        /* --- MODAL (Transaction Details) --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%; 
+            overflow: auto; 
+            background-color: #ffffff;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-back-btn {
+            background-color: var(--btn-blue);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            line-height: 1;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .modal-body { padding: 0; }
+        .modal-body h1 { padding: 20px 20px 12px 20px; }
+        .modal-body h2 { padding: 0 20px 15px 20px; }
+        
+        .details-table-wrapper { overflow-x: auto; }
+        .details-table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .details-table th, .details-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 0.9rem;
+            vertical-align: top;
+        }
+        .details-table th { background-color: #f9f9f9; font-weight: 600; white-space: nowrap; }
+        .details-table td:nth-child(5) { font-weight: 600; }
+
+        .details-list { padding: 20px; }
+        .detail-item {
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+        .detail-item strong {
+            display: block;
+            color: #555;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .detail-item.status-success {
+             background-color: #e8f5e9;
+             border-color: #c8e6c9;
+             font-weight: 600;
+             color: #2e7d32;
+        }
+        .detail-item.status-success strong { color: #1b5e20; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="icons hamburger">
+            <span>&#9776;</span>
+        </div>
+        <div class="title">PU Online Payment Portal</div>
+        <div class="icons">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="6" r="3"></circle>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="12" r="3"></circle>
+              <path d="M9 18c4-3 4-9 9-9"></path>
+              <path d="M9 6c4 3 4 9 9 9"></path>
+            </svg>
+        </div>
+    </header>
+
+    <main>
+        <div class="register-container">
+            <h1>Transaction Register</h1>
+            <h2>RITIKA: TRANSACTION REGISTER</h2>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Trans. ID</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1.</td>
+                            <td>27-Oct-2025</td> <td>564389</td> <td>&#8377; 4140.00</td> <td>Successful</td>
+                            <td class="actions-cell">
+                                <button class="btn-action" id="view-564389">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <span>View</span>
+                                </button>
+                                <button class="btn-action" id="print-564389">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    <span>Print</span>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2.</td>
+                            <td>08-Oct-2025</td>
+                            <td>560381</td>
+                            <td>&#8377; 4140.00</td>
+                            <td>Successful</td>
+                            <td class="actions-cell">
+                                <button class="btn-action" id="view-560381">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <span>View</span>
+                                </button>
+                                <button class="btn-action" id="print-560381">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    <span>Print</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>3.</td>
+                            <td>08-Oct-2025</td>
+                            <td>560373</td>
+                            <td>&#8377; 4120.00</td>
+                            <td>Successful</td>
+                            <td class="actions-cell">
+                                <button class="btn-action" id="view-560373">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <span>View</span>
+                                </button>
+                                <button class="btn-action" id="print-560373">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    <span>Print</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>4.</td>
+                            <td>21-Aug-2025</td>
+                            <td>540093</td>
+                            <td>&#8377; 4430.00</td>
+                            <td>Successful</td>
+                            <td class="actions-cell">
+                                <button class="btn-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <span>View</span>
+                                </button>
+                                <button class="btn-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    <span>Print</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>5.</td>
+                            <td>24-Jul-2025</td>
+                            <td>520428</td>
+                            <td>&#8377; 85845.00</td>
+                            <td>Successful</td>
+                            <td class="actions-cell">
+                                <button class="btn-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <span>View</span>
+                                </button>
+                                <button class="btn-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    <span>Print</span>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>6.</td>
+                            <td>17-Jul-2025</td>
+                            <td>512360</td>
+                            <td>&#8377; 3950.00</td>
+                            <td>Successful</td>
+                            <td class="actions-cell">
+                                <button class="btn-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <span>View</span>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr><td>7.</td><td>15-Jul-2025</td><td>512300</td><td>&#8377; 1200.00</td><td>Successful</td><td class="actions-cell"><button class="btn-action">View</button></td></tr>
+                        <tr><td>8.</td><td>12-Jul-2025</td><td>512200</td><td>&#8377; 500.00</td><td>Successful</td><td class="actions-cell"><button class="btn-action">View</button></td></tr>
+                        <tr><td>9.</td><td>10-Jul-2025</td><td>512100</td><td>&#8377; 8000.00</td><td>Successful</td><td class="actions-cell"><button class="btn-action">View</button></td></tr>
+                        <tr><td>10.</td><td>05-Jul-2025</td><td>512000</td><td>&#8377; 4120.00</td><td>Successful</td><td class="actions-cell"><button class="btn-action">View</button></td></tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Dr. A. P. J. Abdul Kalam Computer Centre,
+        Panjab University. All rights reserved.
+    </footer>
+
+    <div id="modal-564389" class="modal">
+        <div class="modal-header">
+            <span class="modal-back-btn" id="back-564389">&#8629;</span>
+        </div>
+        
+        <div class="modal-body">
+            <h1>Transaction Details</h1>
+            <h2>RITIKA: TRANSACTION DETAILS</h2>
+
+            <div class="details-table-wrapper">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fee Code</th>
+                            <th>Fee Details</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>H0670</td>
+                            <td>GIRLS HOSTEL NO.9 SECTRO-25, (AMRITA PRITAM) - HOSTEL RENT</td>
+                            <td>Ritika, Room.no. 602, October Rent</td> <td>&#8377; 4140.00</td> </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="details-list">
+                <div class="detail-item">
+                    <strong>Transaction ID:</strong>
+                    <span>564389</span> </div>
+                <div class="detail-item">
+                    <strong>Transaction Date:</strong>
+                    <span>27-Oct-2025</span> </div>
+                <div class="detail-item">
+                    <strong>Transaction Amount:</strong>
+                    <span>&#8377; 4140.00</span> </div>
+                <div class="detail-item status-success">
+                    <strong>Online Payment Status:</strong>
+                    <span>Successful [ Executed on: 27-Oct-2025 ]</span> </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-560381" class="modal">
+        <div class="modal-header">
+            <span class="modal-back-btn" id="back-560381">&#8629;</span>
+        </div>
+        
+        <div class="modal-body">
+            <h1>Transaction Details</h1>
+            <h2>RITIKA: TRANSACTION DETAILS</h2>
+
+            <div class="details-table-wrapper">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fee Code</th>
+                            <th>Fee Details</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>H0670</td>
+                            <td>GIRLS HOSTEL NO.9 SECTRO-25, (AMRITA PRITAM) - HOSTEL RENT</td>
+                            <td>Ritika, Room no. 602, October Rent</td>
+                            <td>&#8377; 4140.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="details-list">
+                <div class="detail-item">
+                    <strong>Transaction ID:</strong>
+                    <span>560381</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Transaction Date:</strong>
+                    <span>08-Oct-2025</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Transaction Amount:</strong>
+                    <span>&#8377; 4140.00</span>
+                </div>
+                <div class="detail-item status-success">
+                    <strong>Online Payment Status:</strong>
+                    <span>Successful [ Executed on: 08-Oct-2025 ]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+        // --- JavaScript for Modals and Print ---
+
+        // Get elements for NEW modal (564389)
+        const modal_564389 = document.getElementById('modal-564389');
+        const viewBtn_564389 = document.getElementById('view-564389');
+        const backBtn_564389 = document.getElementById('back-564389');
+        const printBtn_564389 = document.getElementById('print-564389');
+
+        // Get elements for modal (560381)
+        const modal_560381 = document.getElementById('modal-560381');
+        const viewBtn_560381 = document.getElementById('view-560381');
+        const backBtn_560381 = document.getElementById('back-560381'); // <-- TYPO REMOVED
+        const printBtn_560381 = document.getElementById('print-560381');
+        
+        // Get elements for old print button (560373)
+        const printBtn_560373 = document.getElementById('print-560373');
+
+        // Show modal for 564389
+        viewBtn_564389.onclick = function() {
+            modal_564389.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+        // Hide modal for 564389
+        backBtn_564389.onclick = function() {
+            modal_564389.style.display = 'none';
+        }
+
+        // Show modal for 560381
+        viewBtn_560381.onclick = function() {
+            modal_560381.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+        // Hide modal for 560381
+        backBtn_560381.onclick = function() {
+            modal_560381.style.display = 'none';
+        }
+        
+        // --- Download Function ---
+        function downloadFile(href, downloadName) {
+            const a = document.createElement('a');
+            a.href = href;
+            a.download = downloadName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Print button for NEW #1 entry (564389)
+        printBtn_564389.onclick = function() {
+            downloadFile(
+                'PSlip-271025-564389.pdf', // The new file
+                'PSlip-271025-564389.pdf'  // The new file's name
+            );
+        }
+
+        // Print button for #2 entry (560381)
+        printBtn_560381.onclick = function() {
+            downloadFile(
+                'PSlip-081025-560373.pdf', // The *original* file
+                'PSlip-081025-560381.pdf'  // The *faked* download name
+            );
+        }
+
+        // Print button for #3 entry (560373)
+        printBtn_560373.onclick = function() {
+            downloadFile(
+                'PSlip-081025-560373.pdf', // The original file
+                'PSlip-081025-560373.pdf'  // The original download name
+            );
+        }
+    </script>
+
+   </body>
+</html>
